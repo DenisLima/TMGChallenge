@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">TMGChallenge</string>
+    <string name="title_home">Games</string>
+    <string name="title_ranking">Ranking</string>
+    <string name="title_players">Players</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_matches">Matches</string>
+    <string name="button_update">Update</string>
+    <string name="button_delete">Delete</string>
+    <string name="loading_text">Fetching datas...</string>
+    <string name="title_dialog">Attention</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="message_dialog">Are you sure you want to delete this player? The games he participated in will also be deleted!</string>
+    <string name="warning_text">This name already exist, choice other!!</string>
+    <string name="button_register">Save</string>
+    <string name="result_wins">WINS</string>
+    <string name="result_lose">LOSE</string>
+    <string name="main_label">Main Player:</string>
+    <string name="main_score_label">Main Score:</string>
+    <string name="second_label">Second Player:</string>
+    <string name="second_score_label">Second Score:</string>
+    <string name="warning_delete_game">Are you sure you want to delete this match?</string>
+    <string name="warning_same_player">Opsss... Can not set the same player!!</string>
+    <string name="label_games">Games: </string>
+    <string name="label_wins">Wins: </string>
+</resources>

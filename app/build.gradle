@@ -1,0 +1,85 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+}
+
+android {
+    compileSdk 32
+
+    defaultConfig {
+        applicationId "com.djv.tmgchallenge"
+        minSdk 23
+        targetSdk 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        viewBinding true
+    }
+    testOptions {
+        unitTests.includeAndroidResources  = true
+        unitTests.returnDefaultValues = true
+    }
+}
+
+dependencies {
+
+    def room = '2.4.2'
+    def koin = '3.1.5'
+    def core_ktx = '1.7.0'
+    def app_compat = '1.4.1'
+    def material = '1.5.0'
+    def layout = '2.1.3'
+    def lifecycle = '2.4.1'
+    def navigation = '2.3.5'
+
+    implementation "androidx.core:core-ktx:$core_ktx"
+    implementation "androidx.appcompat:appcompat:$app_compat"
+    implementation "com.google.android.material:material:$material"
+    implementation "androidx.constraintlayout:constraintlayout:$layout"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle"
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigation"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigation"
+
+    //Koin
+    implementation "io.insert-koin:koin-core:$koin"
+    implementation "io.insert-koin:koin-android:$koin"
+    implementation "io.insert-koin:koin-android-compat:$koin"
+    implementation "io.insert-koin:koin-androidx-navigation:$koin"
+
+    //Room
+    implementation "androidx.room:room-runtime:$room"
+    kapt "androidx.room:room-compiler:$room"
+    implementation "androidx.room:room-ktx:$room"
+
+    //Fragment
+//    implementation 'androidx.fragment:fragment:1.3.0-alpha04'
+//    implementation 'androidx.fragment:fragment-ktx:1.3.0-alpha04'
+
+    testImplementation 'junit:junit:4.+'
+    testImplementation "io.mockk:mockk:1.9.1"
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.1'
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}

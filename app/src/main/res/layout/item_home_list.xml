@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/homeItemImage"
+        android:layout_width="@dimen/space_50"
+        android:layout_height="@dimen/space_50"
+        android:layout_marginStart="@dimen/space_16"
+        android:layout_marginTop="@dimen/space_16"
+        android:layout_marginBottom="@dimen/space_16"
+        android:src="@drawable/ic_baseline_person"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/homeTitleTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_16"
+        android:fontFamily="@font/anaheim"
+        android:text="Name"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@id/homeItemImage"
+        app:layout_constraintStart_toEndOf="@id/homeItemImage"
+        app:layout_constraintTop_toTopOf="@id/homeItemImage" />
+
+    <TextView
+        android:id="@+id/homeGameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/space_16"
+        android:text="@string/label_games"
+        android:textSize="@dimen/space_16"
+        app:layout_constraintTop_toTopOf="@id/homeGameScore"
+        app:layout_constraintEnd_toStartOf="@id/homeGameScore"
+        app:layout_constraintBottom_toBottomOf="@id/homeGameScore"/>
+
+    <TextView
+        android:id="@+id/homeGameScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/space_16"
+        android:text="20"
+        android:textColor="@color/black"
+        android:textSize="@dimen/font_20"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="@id/homeItemImage"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/homeWinsLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/space_16"
+        android:text="@string/label_wins"
+        android:textSize="@dimen/space_16"
+        app:layout_constraintTop_toTopOf="@id/homeWinsScore"
+        app:layout_constraintEnd_toStartOf="@id/homeWinsScore"
+        app:layout_constraintBottom_toBottomOf="@id/homeWinsScore"/>
+
+    <TextView
+        android:id="@+id/homeWinsScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/space_16"
+        android:text="2"
+        android:textColor="@color/black"
+        android:textSize="@dimen/font_20"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/homeGameScore"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
