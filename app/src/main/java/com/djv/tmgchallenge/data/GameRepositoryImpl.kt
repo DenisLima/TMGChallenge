@@ -6,105 +6,84 @@ import com.djv.tmgchallenge.data.model.Player
 import com.djv.tmgchallenge.data.model.PlayerAndGame
 import com.djv.tmgchallenge.data.model.Ranking
 import com.djv.tmgchallenge.domain.GameRepository
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
+import io.reactivex.Completable
+import io.reactivex.Single
 
 class GameRepositoryImpl(
     private val gameDataSource: GameDataSource
-): GameRepository {
+) : GameRepository {
 
-    override suspend fun getAllGames(): Flow<List<Game>> {
-        return flow {
-            delay(3000)
-            val itemList = gameDataSource.getAllGame()
-            this.emit(itemList)
-        }
+    override fun getAllGames(): Single<List<Game>> {
+        return gameDataSource.getAllGame()
     }
 
-    override suspend fun getAllPlayers(): Flow<List<Player>> {
-        return flow {
-            delay(3000)
-            val itemList = gameDataSource.getAllPlayer()
-            this.emit(itemList)
-        }
+    override fun getAllPlayers(): Single<List<Player>> {
+        return gameDataSource.getAllPlayer()
     }
 
     override suspend fun initPlayers() {
         gameDataSource.initPlayers()
     }
 
-    override suspend fun deletePlayer(player: Player) {
-        gameDataSource.deletePlayer(player)
+    override fun deletePlayer(player: Player): Completable {
+        return gameDataSource.deletePlayer(player)
     }
 
-    override suspend fun updatePlayer(player: Player) {
-        gameDataSource.updatePlayer(player)
+    override fun updatePlayer(player: Player): Completable {
+        return gameDataSource.updatePlayer(player)
     }
 
-    override suspend fun getPlayerByName(playerName: String): Flow<Player> {
-        return flow {
-            val item = gameDataSource.getPlayerByName(playerName)
-            this.emit(item)
-        }
+    override fun getPlayerByName(playerName: String): Single<Player> {
+        return gameDataSource.getPlayerByName(playerName)
     }
 
-    override suspend fun insertPlayer(player: Player) {
-        gameDataSource.insertPlayer(player)
+    override fun insertPlayer(player: Player): Completable {
+        return gameDataSource.insertPlayer(player)
     }
 
     override suspend fun initGames() {
         gameDataSource.initGames()
     }
 
-    override suspend fun getPlayerAndGame(): Flow<List<PlayerAndGame>> {
-        return flow {
-            delay(3000)
-            val item = gameDataSource.getPlayerAndGame()
-            this.emit(item)
-        }
+    override fun getPlayerAndGame(): Single<List<PlayerAndGame>> {
+        return gameDataSource.getPlayerAndGame()
     }
 
-    override suspend fun insertGame(game: Game) {
-        gameDataSource.insertGame(game)
+    override fun insertGame(game: Game): Completable {
+        return gameDataSource.insertGame(game)
     }
 
-    override suspend fun deleteGameByid(gameId: Int) {
-        gameDataSource.deleteGameById(gameId)
+    override fun deleteGameByid(gameId: Int): Completable {
+        return gameDataSource.deleteGameById(gameId)
     }
 
-    override suspend fun getCountMatch(playerId: Int): Flow<Int> {
-        return flow {
-            val item = gameDataSource.getCountMatch(playerId)
-            this.emit(item)
-        }
+    override fun getCountMatch(playerId: Int): Single<Int> {
+        return gameDataSource.getCountMatch(playerId)
     }
 
-    override suspend fun getWinsMatch(playerId: Int): Flow<Int> {
-        return flow {
-            val item = gameDataSource.getMainWinsMatch(playerId)
-            this.emit(item)
-        }
+    override fun getWinsMatch(playerId: Int): Single<Int> {
+        return gameDataSource.getMainWinsMatch(playerId)
     }
 
-    override suspend fun getSecondWinsMatch(playerId: Int): Flow<Int> {
-        return flow {
-            val item = gameDataSource.getSecondWinsMatch(playerId)
-            this.emit(item)
-        }
+    override fun getSecondWinsMatch(playerId: Int): Single<Int> {
+        return gameDataSource.getSecondWinsMatch(playerId)
     }
 
-    override suspend fun deleteGameByPlayerId(playerId: Int) {
-        gameDataSource.deleteGameByPlayerId(playerId)
+    override fun deleteGameByPlayerId(playerId: Int): Completable {
+        return gameDataSource.deleteGameByPlayerId(playerId)
     }
 
-    override suspend fun getRanking(player: Player): Flow<Ranking> {
+    override fun getRanking(player: Player): Single<Ranking> {
         val counter = getCountMatch(player.id)
         val wins = getWinsMatch(player.id)
         val secondWins = getSecondWinsMatch(player.id)
         val playerName = getPlayerByName(player.name)
-        return combine(counter, wins, playerName, secondWins) { counter, wins, playerName, secondWins ->
+        return Single.zip<Int, Int, Player, Int, Ranking>(
+            counter,
+            wins,
+            playerName,
+            secondWins
+        ) { counter, wins, playerName, secondWins ->
             Ranking(
                 playerName = playerName.name,
                 mainCount = counter,
@@ -112,5 +91,6 @@ class GameRepositoryImpl(
                 wins = wins
             )
         }
+
     }
 }

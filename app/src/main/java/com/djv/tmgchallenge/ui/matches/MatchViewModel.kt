@@ -1,5 +1,6 @@
 package com.djv.tmgchallenge.ui.matches
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,10 +10,10 @@ import com.djv.tmgchallenge.data.model.Game
 import com.djv.tmgchallenge.data.model.Player
 import com.djv.tmgchallenge.data.model.PlayerAndGame
 import com.djv.tmgchallenge.domain.GameUseCases
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MatchViewModel(
     private val gameUseCases: GameUseCases
@@ -33,21 +34,23 @@ class MatchViewModel(
     private val isSamePlayerLv = MutableLiveData<Unit>()
     fun getSamePlayer(): LiveData<Unit> = isSamePlayerLv
 
+    @SuppressLint("CheckResult")
     fun fetchGames() {
-        viewModelScope.launch {
-            try {
-                gameUseCases.getPlayerAndGame()
-                    .collect {
-                        if (it.isEmpty()) {
-                            insertInitGames()
-                        } else {
-                            fetchGamesLv.postValue(it)
-                        }
+        gameUseCases.getPlayerAndGame()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onSuccess = {
+                    if (it.isEmpty()) {
+                        insertInitGames()
+                    } else {
+                        fetchGamesLv.postValue(it)
                     }
-            } catch (e: Throwable) {
-                Log.e("ERROR", e.message.toString())
-            }
-        }
+                },
+                onError = {
+                    Log.e("ERROR", it.message.toString())
+                }
+            )
     }
 
     private fun insertInitGames() {
@@ -61,43 +64,53 @@ class MatchViewModel(
         }
     }
 
+    @SuppressLint("CheckResult")
     fun getPlayerList() {
-        viewModelScope.launch {
-            try {
-                gameUseCases.getAllPlayers()
-                    .collect {
-                        playerListLv.postValue(it)
-                    }
-            } catch (e: Throwable) {
-                Log.e("ERROR", e.message.toString())
-            }
-        }
+        gameUseCases.getAllPlayers()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onSuccess = {
+                    playerListLv.postValue(it)
+                },
+                onError = {
+                    Log.e("ERROR", it.message.toString())
+                }
+            )
     }
 
+    @SuppressLint("CheckResult")
     fun insertGame(game: Game) {
         if (game.mainPlayer == game.secondPlayer) {
             isSamePlayerLv.postValue(Unit)
         } else {
-            viewModelScope.launch {
-                try {
-                    gameUseCases.insertGames(game)
-                    isFetchDataLv.postValue(Unit)
-                } catch (e: Throwable) {
-                    Log.e("ERROR", e.message.toString())
-                }
-            }
+            gameUseCases.insertGames(game)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onComplete = {
+                        isFetchDataLv.postValue(Unit)
+                    },
+                    onError = {
+                        Log.e("ERROR", it.message.toString())
+                    }
+                )
         }
     }
 
+    @SuppressLint("CheckResult")
     fun deleteGame(game: PlayerAndGame) {
-        viewModelScope.launch {
-            try {
-                gameUseCases.deleteGameByid(game.idGame)
-                notifyAdapterLv.postValue(Unit)
-            } catch (e: Throwable) {
-                Log.e("ERROR", e.message.toString())
-            }
-        }
+        gameUseCases.deleteGameByid(game.idGame)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onComplete = {
+                    notifyAdapterLv.postValue(Unit)
+                },
+                onError = {
+                    Log.e("ERROR", it.message.toString())
+                }
+            )
     }
 
 }

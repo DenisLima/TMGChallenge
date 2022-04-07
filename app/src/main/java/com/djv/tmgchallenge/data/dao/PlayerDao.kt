@@ -2,22 +2,24 @@ package com.djv.tmgchallenge.data.dao
 
 import androidx.room.*
 import com.djv.tmgchallenge.data.model.Player
+import io.reactivex.Completable
+import io.reactivex.Single
 
 @Dao
 interface PlayerDao {
 
     @Query("SELECT * FROM player")
-    suspend fun getAllPlayers(): List<Player>
+    fun getAllPlayers(): Single<List<Player>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(player: List<Player>)
+    fun insertAll(player: List<Player>) : Completable
 
     @Delete
-    suspend fun delete(player: Player)
+    fun delete(player: Player) : Completable
 
     @Update
-    suspend fun update(player: Player)
+    fun update(player: Player) : Completable
 
     @Query("SELECT * FROM player WHERE playerName = :name")
-    suspend fun getPlayerByName(name: String) : Player
+    fun getPlayerByName(name: String) : Single<Player>
 }
