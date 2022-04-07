@@ -5,6 +5,7 @@
       <map>
         <entry key="app/src/main/res/drawable/borded_button.xml" value="0.13" />
         <entry key="app/src/main/res/drawable/rounded_button.xml" value="0.13" />
+        <entry key="app/src/main/res/layout-night/activity_splash.xml" value="0.17447916666666666" />
         <entry key="app/src/main/res/layout/actiity_splash.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.22" />

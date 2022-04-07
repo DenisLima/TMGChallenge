@@ -24,7 +24,7 @@
         android:layout_marginStart="@dimen/space_16"
         android:text="Denis"
         android:textSize="24sp"
-        android:textColor="@color/black"
+        android:textColor="?android:textColorPrimary"
         app:layout_constraintTop_toTopOf="@id/playerItemImage"
         app:layout_constraintStart_toEndOf="@id/playerItemImage"
         app:layout_constraintBottom_toBottomOf="@id/playerItemImage"/>
