@@ -12,7 +12,7 @@ interface PlayerDao {
     fun getAllPlayers(): Single<List<Player>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(player: List<Player>) : Completable
+    fun insertPlayer(player: Player) : Completable
 
     @Delete
     fun delete(player: Player) : Completable

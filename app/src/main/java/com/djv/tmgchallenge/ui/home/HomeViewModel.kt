@@ -10,13 +10,17 @@ import com.djv.tmgchallenge.domain.GameUseCases
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
-class HomeViewModel(
+class HomeViewModel @Inject constructor(
     private val gameUseCases: GameUseCases
 ) : ViewModel() {
 
     private val getListLv = MutableLiveData<List<Ranking>>()
     fun getList(): LiveData<List<Ranking>> = getListLv
+
+    private val _isEmptyList = MutableLiveData<Unit>()
+    fun isEmptyList(): LiveData<Unit> = _isEmptyList
 
     @SuppressLint("CheckResult")
     fun fetchList() {
@@ -27,27 +31,31 @@ class HomeViewModel(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onSuccess = { listPlayer ->
-                    listPlayer.forEach { player ->
-                        gameUseCases.getRanking(player)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribeBy(
-                                onSuccess = { rank ->
-                                    rankList.add(rank)
-                                    if (listPlayer.size == par) {
-                                        getListLv.postValue(
-                                            rankList.sortedWith(
-                                                compareBy({ it.mainCount },
-                                                    { (it.wins + it.visitorCount) })
-                                            ).asReversed()
-                                        )
+                    if (listPlayer.isNotEmpty()) {
+                        listPlayer.forEach { player ->
+                            gameUseCases.getRanking(player)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribeBy(
+                                    onSuccess = { rank ->
+                                        rankList.add(rank)
+                                        if (listPlayer.size == par) {
+                                            getListLv.postValue(
+                                                rankList.sortedWith(
+                                                    compareBy({ it.mainCount },
+                                                        { (it.wins + it.visitorCount) })
+                                                ).asReversed()
+                                            )
+                                        }
+                                    },
+                                    onError = {
+                                        Log.e("ERROR", it.message.toString())
                                     }
-                                },
-                                onError = {
-                                    Log.e("ERROR", it.message.toString())
-                                }
-                            )
-                        par++
+                                )
+                            par++
+                        }
+                    } else {
+                        _isEmptyList.postValue(Unit)
                     }
                 },
                 onError = {

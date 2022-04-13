@@ -1,5 +1,6 @@
 package com.djv.tmgchallenge.ui.matches
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,20 +8,28 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.djv.tmgchallenge.App
 import com.djv.tmgchallenge.R
-import com.djv.tmgchallenge.data.model.Game
 import com.djv.tmgchallenge.data.model.PlayerAndGame
+import com.djv.tmgchallenge.data.registerdata.MatchRegisterData
 import com.djv.tmgchallenge.databinding.FragmentMatchesBinding
 import com.djv.tmgchallenge.ui.adapter.MatchAdapter
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import javax.inject.Inject
 
 class MatchFragment: Fragment() {
 
     private var binding: FragmentMatchesBinding? = null
     private val bind get() = binding!!
 
-    private val viewModel by viewModel<MatchViewModel>()
+    @Inject lateinit var viewModel: MatchViewModel
+    @Inject lateinit var matchRegisterData: MatchRegisterData
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        App.instance.libraryComponent.inject(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,6 +38,14 @@ class MatchFragment: Fragment() {
     ): View? {
         binding = FragmentMatchesBinding.inflate(inflater)
         return bind.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (matchRegisterData.isRefresh) {
+            viewModel.fetchGames()
+            matchRegisterData.isRefresh = false
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -40,12 +57,8 @@ class MatchFragment: Fragment() {
 
     private fun initComponents() {
         bind.floatMatchButton.setOnClickListener {
-            DialogMatch.newInstance(::handleSaveMatches).show(childFragmentManager, null)
+           findNavController().navigate(R.id.action_matchFragment_to_dialogMatch)
         }
-    }
-
-    private fun handleSaveMatches(game: Game) {
-        viewModel.insertGame(game)
     }
 
     private fun prepareObservers() {
@@ -71,6 +84,7 @@ class MatchFragment: Fragment() {
             bind.loadingTextMatch.visibility = View.VISIBLE
             viewModel.fetchGames()
         }
+
         viewModel.getNotifyAdapter().observe(viewLifecycleOwner) {
             bind.progressMatch.visibility = View.VISIBLE
             bind.recylerMatches.visibility = View.GONE

@@ -6,18 +6,17 @@ import com.djv.tmgchallenge.data.model.PlayerAndGame
 import com.djv.tmgchallenge.data.model.Ranking
 import io.reactivex.Completable
 import io.reactivex.Single
-import kotlinx.coroutines.flow.Flow
 
 interface GameRepository {
 
     fun getAllGames(): Single<List<Game>>
     fun getAllPlayers(): Single<List<Player>>
-    suspend fun initPlayers()
+    fun initPlayers(): Completable
     fun deletePlayer(player: Player): Completable
     fun updatePlayer(player: Player): Completable
     fun getPlayerByName(playerName: String): Single<Player>
     fun insertPlayer(player: Player): Completable
-    suspend fun initGames()
+    fun initGames(): Completable
     fun getPlayerAndGame(): Single<List<PlayerAndGame>>
     fun insertGame(game: Game): Completable
     fun deleteGameByid(gameId: Int): Completable

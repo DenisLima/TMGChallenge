@@ -1,27 +1,35 @@
 package com.djv.tmgchallenge.ui.matches
 
-import android.app.AlertDialog
-import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import androidx.fragment.app.DialogFragment
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import com.djv.tmgchallenge.App
+import com.djv.tmgchallenge.R
 import com.djv.tmgchallenge.data.model.Game
 import com.djv.tmgchallenge.data.model.Player
-import com.djv.tmgchallenge.databinding.PartialUpdateMatchBinding
-import com.djv.tmgchallenge.ui.model.RegisterPlayer
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import com.djv.tmgchallenge.data.registerdata.MatchRegisterData
+import com.djv.tmgchallenge.databinding.FragmentMatchInsertBinding
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
 
-class DialogMatch: DialogFragment() {
+class MatchInsertFragment: Fragment() {
 
-    private lateinit var binding: PartialUpdateMatchBinding
+    private var _binding: FragmentMatchInsertBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var adapter: ArrayAdapter<Player>
-    private val viewModel by sharedViewModel<MatchViewModel>()
+    @Inject lateinit var viewModel: MatchViewModel
+    @Inject lateinit var matchRegisterData: MatchRegisterData
+
     private val textWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(charSequence: CharSequence, i: Int, i2: Int, i3: Int) {}
         override fun onTextChanged(charSequence: CharSequence, i: Int, i2: Int, i3: Int) {
@@ -31,15 +39,31 @@ class DialogMatch: DialogFragment() {
         override fun afterTextChanged(editable: Editable) {}
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        binding = PartialUpdateMatchBinding.inflate(layoutInflater)
-        val alert = AlertDialog.Builder(activity)
-        alert.setView(binding.root)
-        binding.cancelButton.setOnClickListener { dismiss() }
-        binding.mainScoreEd.addTextChangedListener(textWatcher)
-        binding.secondScoreEd.addTextChangedListener(textWatcher)
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        App.instance.libraryComponent.inject(this)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentMatchInsertBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         viewModel.getPlayerList()
         prepareObservers()
+        initComponents()
+    }
+
+    private fun initComponents() {
+        binding.cancelButton.setOnClickListener { requireActivity().onBackPressed() }
+        binding.mainScoreEd.addTextChangedListener(textWatcher)
+        binding.secondScoreEd.addTextChangedListener(textWatcher)
         binding.updateMatchButton.setOnClickListener {
             val cal = Calendar.getInstance()
             cal.add(Calendar.DATE, 1)
@@ -47,7 +71,8 @@ class DialogMatch: DialogFragment() {
             val formatted = format1.format(cal.time)
             val selectedMainObject = binding.mainPlayerSpinner.selectedItem as Player
             val selectedSecondObject = binding.secondPlayerSpinner.selectedItem as Player
-            onClick.invoke(
+
+            viewModel.insertGame(
                 Game(
                     id = 0,
                     mainPlayer = selectedMainObject.id,
@@ -57,13 +82,12 @@ class DialogMatch: DialogFragment() {
                     dateRegister = formatted
                 )
             )
-            dismiss()
+
         }
-        return alert.create()
     }
 
     private fun prepareObservers() {
-        viewModel.getPlayers().observe(this) {
+        viewModel.getPlayers().observe(viewLifecycleOwner) {
             binding.mainPlayerSpinner.visibility = View.VISIBLE
             binding.secondPlayerSpinner.visibility = View.VISIBLE
             binding.mainProgress.visibility = View.GONE
@@ -73,21 +97,20 @@ class DialogMatch: DialogFragment() {
             binding.mainPlayerSpinner.adapter = adapter
             binding.secondPlayerSpinner.adapter = adapter
         }
+
+        viewModel.getSamePlayer().observe(viewLifecycleOwner) {
+            Toast.makeText(requireContext(), getString(R.string.warning_same_player), Toast.LENGTH_LONG).show()
+        }
+
+        viewModel.isInsertMatch().observe(viewLifecycleOwner) {
+            matchRegisterData.isRefresh = true
+            requireActivity().onBackPressed()
+        }
     }
 
     private fun checkFieldsForEmptyValues() {
         binding.updateMatchButton.isEnabled =
             binding.mainScoreEd.text!!.isNotEmpty() &&
                     binding.secondScoreEd.text!!.isNotEmpty()
-    }
-
-    companion object {
-        private var onClick: (game: Game) -> Unit = {}
-
-        fun newInstance(listener: (game: Game) -> Unit): DialogMatch {
-            val fragment = DialogMatch()
-            onClick = listener
-            return fragment
-        }
     }
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="Theme.TMGChallenge">
+    </style>
+
+    <style name="AppTheme.Second" parent="AppTheme">
+        <item name="colorPrimary">@color/khaki_web</item>
+        <item name="colorPrimaryVariant">@color/champagne_pink</item>
+    </style>
+</resources>

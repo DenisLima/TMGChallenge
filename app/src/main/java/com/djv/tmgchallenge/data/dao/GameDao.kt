@@ -13,7 +13,7 @@ interface GameDao {
     fun getAllGames(): Single<List<Game>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(game: List<Game>): Completable
+    fun insertGame(game: Game): Completable
 
     @Delete
     fun delete(game: Game): Completable

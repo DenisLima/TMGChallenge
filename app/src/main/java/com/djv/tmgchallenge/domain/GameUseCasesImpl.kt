@@ -7,7 +7,7 @@ import com.djv.tmgchallenge.data.model.Ranking
 import io.reactivex.Completable
 import io.reactivex.Single
 
-class GameUseCasesImpl(
+class GameUseCasesImpl (
     private val gameRepository: GameRepository
 ): GameUseCases {
 
@@ -19,8 +19,8 @@ class GameUseCasesImpl(
         return gameRepository.getAllPlayers()
     }
 
-    override suspend fun initPlayers() {
-        gameRepository.initPlayers()
+    override fun initPlayers(): Completable {
+        return gameRepository.initPlayers()
     }
 
     override fun deletePlayer(player: Player): Completable {
@@ -40,8 +40,8 @@ class GameUseCasesImpl(
         return gameRepository.insertPlayer(player)
     }
 
-    override suspend fun initGames() {
-        gameRepository.initGames()
+    override fun initGames(): Completable {
+        return gameRepository.initGames()
     }
 
     override fun getPlayerAndGame(): Single<List<PlayerAndGame>> {

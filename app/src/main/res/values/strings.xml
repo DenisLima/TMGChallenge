@@ -23,4 +23,5 @@
     <string name="warning_same_player">Opsss... Can not set the same player!!</string>
     <string name="label_games">Games: </string>
     <string name="label_wins">Wins: </string>
+    <string name="empty_list">Nothing to show</string>
 </resources>

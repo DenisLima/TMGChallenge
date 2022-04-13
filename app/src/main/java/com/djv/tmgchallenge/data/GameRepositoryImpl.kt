@@ -8,8 +8,10 @@ import com.djv.tmgchallenge.data.model.Ranking
 import com.djv.tmgchallenge.domain.GameRepository
 import io.reactivex.Completable
 import io.reactivex.Single
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class GameRepositoryImpl(
+class GameRepositoryImpl (
     private val gameDataSource: GameDataSource
 ) : GameRepository {
 
@@ -21,8 +23,8 @@ class GameRepositoryImpl(
         return gameDataSource.getAllPlayer()
     }
 
-    override suspend fun initPlayers() {
-        gameDataSource.initPlayers()
+    override fun initPlayers(): Completable {
+        return gameDataSource.initPlayers()
     }
 
     override fun deletePlayer(player: Player): Completable {
@@ -41,8 +43,8 @@ class GameRepositoryImpl(
         return gameDataSource.insertPlayer(player)
     }
 
-    override suspend fun initGames() {
-        gameDataSource.initGames()
+    override fun initGames(): Completable {
+        return gameDataSource.initGames()
     }
 
     override fun getPlayerAndGame(): Single<List<PlayerAndGame>> {

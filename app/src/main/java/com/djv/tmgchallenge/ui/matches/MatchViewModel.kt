@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.djv.tmgchallenge.data.model.Game
 import com.djv.tmgchallenge.data.model.Player
 import com.djv.tmgchallenge.data.model.PlayerAndGame
@@ -13,12 +12,13 @@ import com.djv.tmgchallenge.domain.GameUseCases
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MatchViewModel(
+class MatchViewModel @Inject constructor(
     private val gameUseCases: GameUseCases
-): ViewModel() {
+) : ViewModel() {
 
+    //LiveData Region
     private val fetchGamesLv = MutableLiveData<List<PlayerAndGame>>()
     fun getFetchGames(): LiveData<List<PlayerAndGame>> = fetchGamesLv
 
@@ -34,6 +34,11 @@ class MatchViewModel(
     private val isSamePlayerLv = MutableLiveData<Unit>()
     fun getSamePlayer(): LiveData<Unit> = isSamePlayerLv
 
+    private val _isInsertMatch = MutableLiveData<Unit>()
+    fun isInsertMatch(): LiveData<Unit> = _isInsertMatch
+    //LiveData Region end
+
+    //Call region
     @SuppressLint("CheckResult")
     fun fetchGames() {
         gameUseCases.getPlayerAndGame()
@@ -53,15 +58,19 @@ class MatchViewModel(
             )
     }
 
+    @SuppressLint("CheckResult")
     private fun insertInitGames() {
-        viewModelScope.launch {
-            try {
-                gameUseCases.initGames()
-                isFetchDataLv.postValue(Unit)
-            } catch (e: Throwable) {
-                Log.e("ERROR", e.message.toString())
-            }
-        }
+        gameUseCases.initGames()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onComplete = {
+                    isFetchDataLv.postValue(Unit)
+                },
+                onError = {
+                    Log.e("ERROR", it.message.toString())
+                }
+            )
     }
 
     @SuppressLint("CheckResult")
@@ -89,7 +98,7 @@ class MatchViewModel(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                     onComplete = {
-                        isFetchDataLv.postValue(Unit)
+                       _isInsertMatch.postValue(Unit)
                     },
                     onError = {
                         Log.e("ERROR", it.message.toString())
@@ -112,5 +121,5 @@ class MatchViewModel(
                 }
             )
     }
-
+    //Call region end
 }

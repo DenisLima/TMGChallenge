@@ -10,12 +10,12 @@ interface GameDataSource {
 
     fun getAllGame(): Single<List<Game>>
     fun getAllPlayer(): Single<List<Player>>
-    suspend fun initPlayers()
+    fun initPlayers(): Completable
     fun deletePlayer(player: Player): Completable
     fun updatePlayer(player: Player): Completable
     fun getPlayerByName(playerName: String): Single<Player>
     fun insertPlayer(player: Player): Completable
-    suspend fun initGames()
+    fun initGames(): Completable
     fun getPlayerAndGame(): Single<List<PlayerAndGame>>
     fun insertGame(game: Game): Completable
     fun deleteGameById(gameId: Int): Completable

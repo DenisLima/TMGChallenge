@@ -15,10 +15,40 @@
         android:id="@+id/navigation_players"
         android:name="com.djv.tmgchallenge.ui.players.PlayerFragment"
         android:label="@string/title_players"
-        tools:layout="@layout/fragment_players" />
+        tools:layout="@layout/fragment_players" >
+        <action
+            android:id="@+id/action_navigation_players_to_dialogPlayer"
+            app:destination="@id/dialogPlayer" />
+        <action
+            android:id="@+id/action_navigation_players_to_playerInsert"
+            app:destination="@id/playerInsert" />
+    </fragment>
     <fragment
         android:id="@+id/matchFragment"
         android:name="com.djv.tmgchallenge.ui.matches.MatchFragment"
         android:label="MatchFragment"
-        tools:layout="@layout/fragment_matches"/>
+        tools:layout="@layout/fragment_matches">
+        <action
+            android:id="@+id/action_matchFragment_to_dialogMatch"
+            app:destination="@id/dialogMatch" />
+    </fragment>
+    <fragment
+        android:id="@+id/dialogPlayer"
+        android:name="com.djv.tmgchallenge.ui.players.PlayerUpdateFragment"
+        tools:layout="@layout/fragment_player_update"
+        android:label="DialogPlayer" >
+        <argument
+            android:name="playerArg"
+            app:argType="com.djv.tmgchallenge.data.model.Player" />
+    </fragment>
+    <fragment
+        android:id="@+id/playerInsert"
+        android:name="com.djv.tmgchallenge.ui.players.PlayerInsertFragment"
+        tools:layout="@layout/fragment_player_insert"
+        android:label="PlayerInsert" />
+    <fragment
+        android:id="@+id/dialogMatch"
+        android:name="com.djv.tmgchallenge.ui.matches.MatchInsertFragment"
+        tools:layout="@layout/fragment_match_insert"
+        android:label="DialogMatch" />
 </navigation>
