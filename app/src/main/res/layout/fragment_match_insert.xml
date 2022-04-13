@@ -55,6 +55,7 @@
             android:layout_marginTop="@dimen/space_16"
             android:layout_marginEnd="@dimen/space_16"
             android:layout_height="wrap_content"
+            android:inputType="number"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/mainPlayerSpinner"
             app:layout_constraintTop_toBottomOf="@+id/mainPlayerSpinner" />
@@ -114,6 +115,7 @@
             android:layout_marginTop="@dimen/space_16"
             android:layout_marginEnd="@dimen/space_16"
             android:layout_height="wrap_content"
+            android:inputType="number"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/secondPlayerSpinner"
             app:layout_constraintTop_toBottomOf="@+id/secondPlayerSpinner" />
