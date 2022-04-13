@@ -7,8 +7,10 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.djv.tmgchallenge.App
+import com.djv.tmgchallenge.R
 import com.djv.tmgchallenge.data.model.Player
 import com.djv.tmgchallenge.databinding.FragmentPlayerInsertBinding
 import javax.inject.Inject
@@ -38,6 +40,7 @@ class PlayerInsertFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initComponents()
+        prepareObservers()
     }
 
     private fun initComponents() {
@@ -47,7 +50,7 @@ class PlayerInsertFragment: Fragment() {
                 player = Player(name = binding.playerName.text.toString()),
                 isUpdate = false
             )
-            requireActivity().onBackPressed()
+            //requireActivity().onBackPressed()
         }
 
         binding.cancelButton.setOnClickListener {
@@ -67,5 +70,22 @@ class PlayerInsertFragment: Fragment() {
             override fun afterTextChanged(p0: Editable?) {
             }
         })
+    }
+
+    private fun prepareObservers() {
+        viewModel.getPlayerExist().observe(viewLifecycleOwner) {
+            if (it.first) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.warning_text),
+                    Toast.LENGTH_LONG
+                ).show()
+            } else {
+                viewModel.updatePlayer(it.second)
+            }
+        }
+        viewModel.isCloseDialog.observe(viewLifecycleOwner) {
+            requireActivity().onBackPressed()
+        }
     }
 }

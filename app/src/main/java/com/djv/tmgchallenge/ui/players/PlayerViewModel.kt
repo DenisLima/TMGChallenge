@@ -114,19 +114,40 @@ class PlayerViewModel @Inject constructor(
                    }
                 )
         } else {
-            gameUseCases.insertPlayer(player!!)
+            gameUseCases.getPlayerByName(player!!.name)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                    onComplete = {
-                        notifyAdapterLv.postValue(Unit)
-                        publishSub.onNext(true)
+                    onSuccess = {
+                        if (it != null) {
+                            isPlayerExistLv.postValue(Pair(true, player))
+                        } else {
+                            insertPlayer(player)
+                        }
                     },
                     onError = {
-                        Log.e("ERROR", it.message.toString())
+                        if(it is EmptyResultSetException) {
+                            insertPlayer(player)
+                        }
                     }
                 )
         }
+    }
+
+    @SuppressLint("CheckResult")
+    private fun insertPlayer(player: Player) {
+        gameUseCases.insertPlayer(player)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onComplete = {
+                    notifyAdapterLv.postValue(Unit)
+                    _isCloseDialog.value = Unit
+                },
+                onError = {
+                    Log.e("ERROR", it.message.toString())
+                }
+            )
     }
 
     @SuppressLint("CheckResult")
