@@ -17,6 +17,7 @@ class GameDataSourceImpl (
 
     override fun getAllPlayer(): Single<List<Player>> = tmgDatabase.playerDao().getAllPlayers()
 
+    //Bump to insert historical data
     override fun initPlayers(): Completable {
         val list = mutableListOf<Player>()
         list.add(Player(1, "Amos"))
@@ -37,7 +38,7 @@ class GameDataSourceImpl (
         return tmgDatabase.playerDao().insertPlayer(player)
     }
 
-    //comment here
+    //Bump to insert historical data
     override fun initGames(): Completable {
         val gameList = mutableListOf<Game>()
         gameList.add(Game(1, 1, 4, 2, 5, "24/03/2022"))
